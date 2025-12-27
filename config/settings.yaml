@@ -1,11 +1,13 @@
 ---
 title: Team Hub
 theme: dark
-color: slate
+color: zinc
 
 headerStyle: underlined
 hideVersion: true
 useEqualHeights: true
+lazyLoad: true
+statusStyle: dot
 
 background:
   image: /backgrounds/v1-background-dark.jpg
