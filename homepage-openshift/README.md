@@ -1,83 +1,187 @@
-# homepage
+# Homepage Helm Chart for OpenShift
 
-![Version: 4.5.0](https://img.shields.io/badge/Version-4.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: v1.8.0](https://img.shields.io/badge/AppVersion-v1.8.0-informational?style=flat-square)
+Air-gapped ready Homepage dashboard with ArgoCD and GitLab integrations.
 
-homepage helm chart for Kubernetes
+## 🚀 Quick Start
 
-**Homepage:** <https://github.com/gethomepage/homepage>
+```bash
+# Deploy Homepage
+helm install homepage . -n homepage --create-namespace
 
-## Maintainers
-
-| Name | Email | Url |
-| ---- | ------ | --- |
-| Ludovic Ortega | <ludovic.ortega@adminafk.fr> |  |
-
-## Source Code
-
-* <https://github.com/M0NsTeRRR/helm-charts/tree/main/charts/homepage>
-
-## Requirements
-
-Kubernetes: `>=1.23.0-0`
-
-## Install
-
-```console
-helm install homepage oci://ghcr.io/m0nsterrr/helm-charts/homepage
+# With custom values
+helm install homepage . -f custom-values.yaml
 ```
 
-Verify the signature with [cosign](https://docs.sigstore.dev/cosign/system_config/installation/) :
+## 📋 Prerequisites
 
-```console
-cosign verify ghcr.io/m0nsterrr/helm-charts/homepage:4.5.0 --certificate-identity=https://github.com/M0NsTeRRR/helm-charts/.github/workflows/releases.yml@refs/heads/main --certificate-oidc-issuer=https://token.ac
-tions.githubusercontent.com
+1. **OpenShift/Kubernetes cluster** (v1.23+)
+2. **Internal container registry** (for air-gapped)
+3. **Helm 3.x**
+4. **Background images ConfigMap** (optional)
+5. **API tokens Secret** (for widgets)
+
+## 🔐 Secrets Setup
+
+Create secrets for ArgoCD and GitLab integrations:
+
+```bash
+oc create secret generic homepage-secrets \
+  --from-literal=argocd-token='YOUR_ARGOCD_TOKEN' \
+  --from-literal=gitlab-token='YOUR_GITLAB_TOKEN' \
+  -n homepage
 ```
 
-## Values
+**See [SECRETS.md](SECRETS.md) for detailed token setup.**
 
-| Key | Type | Default | Description |
-|-----|------|---------|-------------|
-| affinity | object | `{}` |  |
-| config.allowedHosts | list | `[]` | see https://gethomepage.dev/installation/#homepage_allowed_hosts |
-| extraEnv | list | `[]` | Environment variables to add to the kea-exporter pods |
-| extraEnvFrom | list | `[]` | Environment variables from secrets or configmaps to add to the kea-exporter pods |
-| fullnameOverride | string | `""` |  |
-| image.pullPolicy | string | `"IfNotPresent"` |  |
-| image.registry | string | `"ghcr.io"` |  |
-| image.repository | string | `"gethomepage/homepage"` |  |
-| image.sha | string | `""` |  |
-| image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion. |
-| imagePullSecrets | list | `[]` |  |
-| ingress.annotations | object | `{}` |  |
-| ingress.enabled | bool | `false` |  |
-| ingress.hosts[0].host | string | `"chart-example.local"` |  |
-| ingress.hosts[0].paths[0].path | string | `"/"` |  |
-| ingress.hosts[0].paths[0].pathType | string | `"ImplementationSpecific"` |  |
-| ingress.ingressClassName | string | `""` |  |
-| ingress.tls | list | `[]` |  |
-| nameOverride | string | `""` |  |
-| nodeSelector | object | `{}` |  |
-| podAnnotations | object | `{}` |  |
-| podLabels | object | `{}` |  |
-| podSecurityContext.fsGroup | int | `1000` |  |
-| podSecurityContext.fsGroupChangePolicy | string | `"OnRootMismatch"` |  |
-| rbac.enabled | bool | `true` |  |
-| replicaCount | int | `1` |  |
-| resources | object | `{}` |  |
-| securityContext.allowPrivilegeEscalation | bool | `false` |  |
-| securityContext.capabilities.drop[0] | string | `"ALL"` |  |
-| securityContext.privileged | bool | `false` |  |
-| securityContext.readOnlyRootFilesystem | bool | `false` |  |
-| securityContext.runAsGroup | int | `1000` |  |
-| securityContext.runAsNonRoot | bool | `true` |  |
-| securityContext.runAsUser | int | `1000` |  |
-| securityContext.seccompProfile.type | string | `"RuntimeDefault"` |  |
-| service.port | int | `80` |  |
-| service.type | string | `"ClusterIP"` |  |
-| serviceAccount.annotations | object | `{}` | Annotations to add to the service account |
-| serviceAccount.automount | bool | `true` | Automatically mount a ServiceAccount's API credentials? |
-| serviceAccount.create | bool | `true` | Specifies whether a service account should be created |
-| serviceAccount.name | string | `""` | If not set and create is true, a name is generated using the fullname template |
-| tolerations | list | `[]` |  |
-| volumeMounts | list | `[]` | Additional volumeMounts on the output Deployment definition. |
-| volumes | list | `[]` | Additional volumes on the output Deployment definition. |
+## 🖼️ Background Images
+
+Create ConfigMap with your background images:
+
+```bash
+oc create configmap homepage-backgrounds \
+  --from-file=v4-background-dark.jpg=../assets/backgrounds/v4-background-dark.jpg \
+  -n homepage
+```
+
+## ⚙️ Configuration
+
+### Key Values to Customize
+
+```yaml
+# Internal Registry (for air-gapped)
+image:
+  registry: registry.internal.local  # Change this
+  repository: homepage
+  tag: latest
+
+# OpenShift Route
+route:
+  host: "homepage.apps.internal.local"  # Change this
+
+# Service URLs (in config.services)
+- Core GitOps:
+    - GitLab GitOps Project:
+        href: https://gitlab.internal.local/your-team/gitops  # Change this
+    - ArgoCD Main:
+        href: https://argocd.internal.local  # Change this
+```
+
+## 📦 What's Included
+
+- **6 Service Sections**:
+  - Core GitOps (GitLab, ArgoCD, repo count)
+  - Documentation (Confluence)
+  - Monitoring (Grafana)
+  - Internal Tools (VLAN Manager, Cluster Navigator)
+  - Management Clusters (6x OpenShift consoles + ArgoCD)
+  - DC Systems (UCS, NetBox, OpenManage, OneView)
+
+- **Widgets**:
+  - ArgoCD application stats
+  - GitLab group repository count
+  - Resources (CPU/Memory)
+  - Date/Time
+
+- **Features**:
+  - Air-gapped compatible
+  - OpenShift Routes
+  - Dark theme with blur effects
+  - Equal height cards
+  - Quick Links bookmarks
+
+## 🌐 Air-Gapped Deployment
+
+**See [AIRGAP-DEPLOYMENT.md](AIRGAP-DEPLOYMENT.md) for complete guide.**
+
+### Quick Steps
+
+1. **Mirror image to internal registry**:
+   ```bash
+   podman pull ghcr.io/gethomepage/homepage:latest
+   podman tag ghcr.io/gethomepage/homepage:latest registry.internal.local/homepage:latest
+   podman push registry.internal.local/homepage:latest
+   ```
+
+2. **Create secrets and ConfigMaps**
+3. **Deploy with Helm**:
+   ```bash
+   helm install homepage . \
+     --set image.registry=registry.internal.local \
+     --set route.host=homepage.apps.internal.local
+   ```
+
+## 📖 Documentation
+
+- **[AIRGAP-DEPLOYMENT.md](AIRGAP-DEPLOYMENT.md)** - Air-gapped deployment guide
+- **[SECRETS.md](SECRETS.md)** - API token configuration
+- **[README-OpenShift.md](README-OpenShift.md)** - OpenShift-specific features
+
+## 🔧 Customization Examples
+
+### Change Background
+```yaml
+config:
+  settings: |
+    background:
+      image: /backgrounds/your-image.jpg
+      blur: md
+      opacity: 40
+```
+
+### Add More Services
+```yaml
+config:
+  services: |
+    - Your Section:
+        - Your Service:
+            href: https://service.internal.local
+            description: Your description
+            icon: mdi-icon-name
+```
+
+### Adjust Resources
+```yaml
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+```
+
+## ✅ Verification
+
+```bash
+# Check deployment
+oc get pods -l app.kubernetes.io/name=homepage
+
+# Get Route URL
+oc get route homepage -o jsonpath='{.spec.host}'
+
+# Check logs
+oc logs -l app.kubernetes.io/name=homepage
+```
+
+## 🚨 Troubleshooting
+
+### Widgets not showing
+- Check secrets are created: `oc get secret homepage-secrets`
+- Verify tokens are valid
+- Check logs for API errors
+
+### Background image not loading
+- Verify ConfigMap: `oc get configmap homepage-backgrounds`
+- Check image is mounted: `oc exec <pod> -- ls /app/public/backgrounds`
+
+### Route not working
+- Check host validation in environment variables
+- Verify TLS configuration
+
+## 📝 License
+
+Based on the open-source [Homepage](https://github.com/gethomepage/homepage) project.
+
+---
+
+**Ready for air-gapped OpenShift deployment!** 🚀

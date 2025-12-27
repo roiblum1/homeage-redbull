@@ -1,19 +1,35 @@
 ---
-title: Team Services Dashboard - Air-Gapped
-# No external favicon for air-gapped environment
+title: Team Hub
 theme: dark
 color: slate
-background: 
-  image: /backgrounds/v2-background-dark.jpg
-  blur: sx
-  saturate: 50
-  brightness: 50
-  opacity: 20
+
+headerStyle: underlined
+hideVersion: true
+useEqualHeights: true
+
+background:
+  image: /backgrounds/v1-background-dark.jpg
+  blur: sm
+  saturate: 60
+  brightness: 70
+  opacity: 35
+
 layout:
-  Services:
+  Core GitOps:
+    style: row
+    columns: 3
+  Documentation:
+    style: row
+    columns: 3
+  Monitoring:
+    style: row
+    columns: 3
+  Internal Tools:
+    style: row
+    columns: 3
+  Management Clusters:
     style: row
     columns: 4
-    equalHeight: true
-headerStyle: underlined
-cardBlur: md
-hideVersion: true
+  DC Systems:
+    style: row
+    columns: 4

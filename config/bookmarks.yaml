@@ -1,30 +1,14 @@
 ---
-- Internal Tools:
-    - Internal GitLab:
+- Quick Links:
+    - GitLab:
         - icon: mdi-gitlab
           href: https://gitlab.internal.local
-    - Internal Registry:
-        - icon: mdi-docker
-          href: https://registry.internal.local
-    - Documentation:
-        - icon: mdi-book-open-page-variant
-          href: https://docs.internal.local
-
-- DevOps:
-    - OpenShift Console:
-        - icon: mdi-kubernetes
-          href: https://console.openshift.local
-    - ArgoCD:
+    - ArgoCD Main:
         - icon: mdi-ship-wheel
           href: https://argocd.internal.local
-    - Nexus:
-        - icon: mdi-package-variant
-          href: https://nexus.internal.local
-
-- Monitoring:
+    - Confluence:
+        - icon: mdi-book-open-page-variant
+          href: https://confluence.internal.local
     - Grafana:
         - icon: mdi-chart-line
           href: https://grafana.internal.local
-    - Prometheus:
-        - icon: mdi-fire
-          href: https://prometheus.internal.local

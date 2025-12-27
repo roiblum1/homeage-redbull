@@ -1,60 +1,274 @@
+# Air-Gapped Homepage Configuration with ArgoCD Apps + GitLab Group Repo Count
+
 replicaCount: 1
 
 image:
-  registry: ghcr.io
-  repository: gethomepage/homepage
+  registry: registry.internal.local          # CHANGE TO YOUR INTERNAL REGISTRY
+  repository: homepage
   pullPolicy: IfNotPresent
-  # -- Overrides the image tag whose default is the chart appVersion.
-  tag: ""
-  sha: ""
+  tag: "latest"
 
 imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
+# imagePullSecrets:
+#   - name: internal-registry-secret
 
-# -- Environment variables to add to the homepage pods
 extraEnv:
+  # Allow reverse-proxy/Route hostnames (you can tighten later)
   - name: HOMEPAGE_ALLOWED_HOSTS
     value: "*"
-# -- Environment variables from secrets or configmaps to add to the homepage pods
-extraEnvFrom: []
+
+  # Tokens are injected via env var placeholders in YAML:
+  # - {{HOMEPAGE_VAR_ARGOCD_TOKEN}}
+  # - {{HOMEPAGE_VAR_GITLAB_TOKEN}}
+  #
+  # Create a Secret named "homepage-secrets" with these keys:
+  # - argocd-token
+  # - gitlab-token
+  - name: HOMEPAGE_VAR_ARGOCD_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: homepage-secrets
+        key: argocd-token
+        optional: true  # Set to false in production
+  - name: HOMEPAGE_VAR_GITLAB_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: homepage-secrets
+        key: gitlab-token
+        optional: true  # Set to false in production
 
 config:
-  # -- List of allowed hosts (sometimes with the port) that can host your homepage install
-  # -- see https://gethomepage.dev/installation/#homepage_allowed_hosts
   allowedHosts: []
 
+  services: |
+    ---
+    - Core GitOps:
+        - GitLab GitOps Project:
+            href: https://gitlab.internal.local/your-team/gitops
+            description: Main GitOps repository
+            icon: mdi-gitlab
+
+        - ArgoCD Main:
+            href: https://argocd.internal.local
+            description: Main Argo CD instance (tracks the GitOps repo)
+            icon: mdi-ship-wheel
+            widget:
+              type: argocd
+              url:  https://argocd.internal.local
+              username: "{{HOMEPAGE_VAR_ARGOCD_TOKEN}}"
+              # fields: ["apps", "healthy", "outOfSync", "degraded"]
+
+        - GitLab Team Group:
+            href: https://gitlab.internal.local/groups/your-team
+            description: Team group (repo count)
+            icon: mdi-gitlab
+            widget:
+              type: customapi
+              # IMPORTANT:
+              # If the group is nested, URL-encode the slash: e.g. platform%2Fyour-team
+              url: "https://gitlab.internal.local/api/v4/groups/your-team/projects?per_page=100"
+              method: GET
+              headers:
+                PRIVATE-TOKEN: "{{HOMEPAGE_VAR_GITLAB_TOKEN}}"
+              mappings:
+                - label: Repos
+                  format: size
+
+    - Documentation:
+        - Confluence:
+            href: https://confluence.internal.local
+            description: Team documentation
+            icon: mdi-book-open-page-variant
+
+    - Monitoring:
+        - Grafana Dashboard:
+            href: https://grafana.internal.local/d/XXXX/main-dashboard
+            description: Main operational dashboard
+            icon: mdi-chart-line
+
+    - Internal Tools:
+        - VLAN Manager:
+            href: http://vlan-manager.internal.local:8000
+            description: Network VLAN management tool
+            icon: mdi-network
+
+        - Cluster Navigator:
+            href: http://navigator.internal.local:8001
+            description: OpenShift cluster navigation tool
+            icon: mdi-compass-outline
+
+    - Management Clusters:
+        - mgmt-01 Console:
+            href: https://console-mgmt01.apps.internal.local
+            description: OpenShift console
+            icon: mdi-kubernetes
+
+        - mgmt-01 Argo:
+            href: https://argocd-mgmt01.apps.internal.local
+            description: Cluster-local Argo instance
+            icon: mdi-ship-wheel
+
+        - mgmt-02 Console:
+            href: https://console-mgmt02.apps.internal.local
+            description: OpenShift console
+            icon: mdi-kubernetes
+
+        - mgmt-02 Argo:
+            href: https://argocd-mgmt02.apps.internal.local
+            description: Cluster-local Argo instance
+            icon: mdi-ship-wheel
+
+        - mgmt-03 Console:
+            href: https://console-mgmt03.apps.internal.local
+            description: OpenShift console
+            icon: mdi-kubernetes
+
+        - mgmt-03 Argo:
+            href: https://argocd-mgmt03.apps.internal.local
+            description: Cluster-local Argo instance
+            icon: mdi-ship-wheel
+
+        - mgmt-04 Console:
+            href: https://console-mgmt04.apps.internal.local
+            description: OpenShift console
+            icon: mdi-kubernetes
+
+        - mgmt-04 Argo:
+            href: https://argocd-mgmt04.apps.internal.local
+            description: Cluster-local Argo instance
+            icon: mdi-ship-wheel
+
+        - mgmt-05 Console:
+            href: https://console-mgmt05.apps.internal.local
+            description: OpenShift console
+            icon: mdi-kubernetes
+
+        - mgmt-05 Argo:
+            href: https://argocd-mgmt05.apps.internal.local
+            description: Cluster-local Argo instance
+            icon: mdi-ship-wheel
+
+        - mgmt-06 Console:
+            href: https://console-mgmt06.apps.internal.local
+            description: OpenShift console
+            icon: mdi-kubernetes
+
+        - mgmt-06 Argo:
+            href: https://argocd-mgmt06.apps.internal.local
+            description: Cluster-local Argo instance
+            icon: mdi-ship-wheel
+
+    - DC Systems:
+        - Cisco UCS:
+            href: https://ucs.internal.local
+            description: UCS Manager
+            icon: mdi-server
+
+        - NetBox:
+            href: https://netbox.internal.local
+            description: IPAM / DCIM
+            icon: mdi-ip-network
+
+        - OpenManage:
+            href: https://openmanage.internal.local
+            description: Dell OpenManage
+            icon: mdi-server-network
+
+        - OneView:
+            href: https://oneview.internal.local
+            description: HPE OneView
+            icon: mdi-server-network
+
+  settings: |
+    ---
+    title: Team Hub
+    theme: dark
+    color: slate
+
+    headerStyle: underlined
+    hideVersion: true
+    useEqualHeights: true
+
+    background:
+      image: /backgrounds/v4-background-dark.jpg
+      blur: sm
+      saturate: 60
+      brightness: 70
+      opacity: 35
+
+    layout:
+      Core GitOps:
+        style: row
+        columns: 3
+      Documentation:
+        style: row
+        columns: 3
+      Monitoring:
+        style: row
+        columns: 3
+      Internal Tools:
+        style: row
+        columns: 3
+      Management Clusters:
+        style: row
+        columns: 4
+      DC Systems:
+        style: row
+        columns: 4
+
+  widgets: |
+    ---
+    - resources:
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+
+    - datetime:
+        text_size: xl
+        format:
+          timeStyle: short
+          dateStyle: short
+
+    # Optional: Add search if needed
+    # - search:
+    #     provider: google
+    #     target: _blank
+
+  bookmarks: |
+    ---
+    - Quick Links:
+        - GitLab:
+            - icon: mdi-gitlab
+              href: https://gitlab.internal.local
+        - ArgoCD Main:
+            - icon: mdi-ship-wheel
+              href: https://argocd.internal.local
+        - Confluence:
+            - icon: mdi-book-open-page-variant
+              href: https://confluence.internal.local
+        - Grafana:
+            - icon: mdi-chart-line
+              href: https://grafana.internal.local
+
 serviceAccount:
-  # -- Specifies whether a service account should be created
   create: true
-  # -- Automatically mount a ServiceAccount's API credentials?
   automount: true
-  # -- Annotations to add to the service account
   annotations: {}
-  # -- The name of the service account to use.
-  # -- If not set and create is true, a name is generated using the fullname template
   name: ""
 
 podAnnotations: {}
 podLabels: {}
 
-# OpenShift compatible security contexts
 podSecurityContext: {}
-  # OpenShift assigns random UIDs, so we don't set fsGroup
-  # fsGroup: 1000
-  # fsGroupChangePolicy: OnRootMismatch
 
 securityContext:
   allowPrivilegeEscalation: false
   capabilities:
-    drop:
-      - ALL
+    drop: [ "ALL" ]
   readOnlyRootFilesystem: false
   runAsNonRoot: true
   privileged: false
-  # OpenShift assigns random UIDs, so we don't set runAsUser/runAsGroup
-  # runAsUser: 1000
-  # runAsGroup: 1000
   seccompProfile:
     type: RuntimeDefault
 
@@ -64,25 +278,10 @@ service:
 
 ingress:
   enabled: false
-  ingressClassName: ""
-  annotations:
-    {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
-# OpenShift Route configuration
 route:
   enabled: true
-  host: ""
+  host: "homepage.apps.internal.local"     # CHANGE TO YOUR INTERNAL DOMAIN
   annotations: {}
   tls:
     enabled: true
@@ -93,33 +292,31 @@ rbac:
   enabled: true
 
 resources:
-  {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
 
-# -- Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+volumes:
+  - name: config
+    configMap:
+      name: "{{ include \"homepage.fullname\" . }}-config"
 
-# -- Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+  - name: backgrounds
+    configMap:
+      name: homepage-backgrounds
+
+volumeMounts:
+  - name: config
+    mountPath: "/app/config"
+    readOnly: true
+
+  - name: backgrounds
+    mountPath: "/app/public/backgrounds"
+    readOnly: true
 
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}

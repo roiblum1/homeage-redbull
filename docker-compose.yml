@@ -15,4 +15,7 @@ services:
       PUID: 1000
       PGID: 1000
       HOMEPAGE_ALLOWED_HOSTS: "localhost,127.0.0.1,0.0.0.0"
+      # Optional: Add your ArgoCD and GitLab tokens here (or use .env file)
+      # HOMEPAGE_VAR_ARGOCD_TOKEN: "your-argocd-token"
+      # HOMEPAGE_VAR_GITLAB_TOKEN: "your-gitlab-token"
     restart: unless-stopped
