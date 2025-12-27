@@ -1,0 +1,19 @@
+---
+title: Team Services Dashboard
+favicon: https://github.com/gethomepage/homepage/raw/main/public/android-chrome-192x192.png
+theme: dark
+color: slate
+background: 
+  image: /backgrounds/v4-background-dark.jpg
+  blur: sx
+  saturate: 50
+  brightness: 50
+  opacity: 20
+layout:
+  Services:
+    style: row
+    columns: 4
+    equalHeight: true
+headerStyle: underlined
+cardBlur: md
+hideVersion: true

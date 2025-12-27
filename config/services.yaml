@@ -1,0 +1,48 @@
+---
+- Services:
+    - VLAN Manager:
+        href: http://localhost:8000
+        description: Network VLAN management tool
+        icon: mdi-network
+    
+    - Cluster Navigator:
+        href: http://localhost:8001
+        description: OpenShift cluster navigation tool
+        icon: mdi-compass-outline
+    
+    - GitLab Project:
+        href: https://gitlab.example.com/your-team/specific-repo
+        description: Specific project repository
+        icon: mdi-git
+    
+    - ArgoCD Main:
+        href: https://argocd-main.example.com
+        description: Primary GitOps deployment instance
+        icon: mdi-ship-wheel
+
+- Developer Tools:
+    - Confluence:
+        href: https://confluence.example.com
+        description: Team documentation and knowledge base
+        icon: mdi-book-open-page-variant
+    
+    - GitLab Team:
+        href: https://gitlab.example.com/groups/your-team
+        description: Team group repositories
+        icon: mdi-gitlab
+
+- ArgoCD Instances:
+    - ArgoCD Dev:
+        href: https://argocd-dev.example.com
+        description: Development environment deployments
+        icon: mdi-ship-wheel
+    
+    - ArgoCD Staging:
+        href: https://argocd-staging.example.com
+        description: Staging environment deployments
+        icon: mdi-ship-wheel
+    
+    - ArgoCD Production:
+        href: https://argocd-prod.example.com
+        description: Production environment deployments
+        icon: mdi-ship-wheel

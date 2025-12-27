@@ -1,0 +1,19 @@
+apiVersion: v2
+kubeVersion: ">=1.23.0-0"
+name: homepage
+description: Homepage helm chart for OpenShift
+type: application
+version: 4.5.0-openshift
+# image: ghcr.io/gethomepage/homepage
+appVersion: "v1.8.0"
+keywords:
+  - homepage
+  - dashboard
+  - openshift
+maintainers:
+  - name: Ludovic Ortega
+    email: ludovic.ortega@adminafk.fr
+sources:
+  - https://github.com/M0NsTeRRR/helm-charts/tree/main/charts/homepage
+home: https://github.com/gethomepage/homepage
+icon: https://artifacthub.io/image/e417b561-5fe4-4ee3-9b89-f67df4069169

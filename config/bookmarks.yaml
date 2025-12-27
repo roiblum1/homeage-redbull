@@ -1,0 +1,30 @@
+---
+- Developer Tools:
+    - GitHub:
+        - icon: mdi-github
+          href: https://github.com
+    - Stack Overflow:
+        - icon: mdi-stack-overflow
+          href: https://stackoverflow.com
+    - Docker Hub:
+        - icon: mdi-docker
+          href: https://hub.docker.com
+          
+- DevOps:
+    - Kubernetes:
+        - icon: mdi-kubernetes
+          href: https://kubernetes.io
+    - Terraform:
+        - icon: mdi-terraform
+          href: https://terraform.io
+    - Helm:
+        - icon: mdi-ship-wheel
+          href: https://helm.sh
+          
+- Monitoring:
+    - Grafana:
+        - icon: mdi-chart-line
+          href: https://grafana.com
+    - Prometheus:
+        - icon: mdi-fire
+          href: https://prometheus.io

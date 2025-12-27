@@ -1,0 +1,16 @@
+---
+- resources:
+    backend: resources
+    expanded: true
+    cpu: true
+    memory: true
+
+- search:
+    provider: google
+    target: _blank
+    
+- datetime:
+    text_size: xl
+    format:
+      timeStyle: short
+      dateStyle: short

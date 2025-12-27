@@ -1,0 +1,54 @@
+# Homepage runtime files
+config/logs/
+config/docker.yaml
+config/kubernetes.yaml
+config/proxmox.yaml
+config/custom.css
+config/custom.js
+
+# Container-generated files
+.config/
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Docker
+.dockerignore
+
+# Helm
+*.tgz
+charts/*.tgz
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Backup files
+*.bak
+*.backup
