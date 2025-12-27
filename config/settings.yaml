@@ -1,10 +1,10 @@
 ---
-title: Team Services Dashboard
-favicon: https://github.com/gethomepage/homepage/raw/main/public/android-chrome-192x192.png
+title: Team Services Dashboard - Air-Gapped
+# No external favicon for air-gapped environment
 theme: dark
 color: slate
 background: 
-  image: /backgrounds/v4-background-dark.jpg
+  image: /backgrounds/v2-background-dark.jpg
   blur: sx
   saturate: 50
   brightness: 50

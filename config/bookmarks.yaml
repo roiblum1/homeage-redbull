@@ -1,30 +1,30 @@
 ---
-- Developer Tools:
-    - GitHub:
-        - icon: mdi-github
-          href: https://github.com
-    - Stack Overflow:
-        - icon: mdi-stack-overflow
-          href: https://stackoverflow.com
-    - Docker Hub:
+- Internal Tools:
+    - Internal GitLab:
+        - icon: mdi-gitlab
+          href: https://gitlab.internal.local
+    - Internal Registry:
         - icon: mdi-docker
-          href: https://hub.docker.com
-          
+          href: https://registry.internal.local
+    - Documentation:
+        - icon: mdi-book-open-page-variant
+          href: https://docs.internal.local
+
 - DevOps:
-    - Kubernetes:
+    - OpenShift Console:
         - icon: mdi-kubernetes
-          href: https://kubernetes.io
-    - Terraform:
-        - icon: mdi-terraform
-          href: https://terraform.io
-    - Helm:
+          href: https://console.openshift.local
+    - ArgoCD:
         - icon: mdi-ship-wheel
-          href: https://helm.sh
-          
+          href: https://argocd.internal.local
+    - Nexus:
+        - icon: mdi-package-variant
+          href: https://nexus.internal.local
+
 - Monitoring:
     - Grafana:
         - icon: mdi-chart-line
-          href: https://grafana.com
+          href: https://grafana.internal.local
     - Prometheus:
         - icon: mdi-fire
-          href: https://prometheus.io
+          href: https://prometheus.internal.local

@@ -9,7 +9,7 @@ services:
     volumes:
       - ./config:/app/config
       - ./icons:/app/public/icons
-      - /home/roi/Pictures/backgrounds:/app/public/backgrounds:ro
+      - ./assets/backgrounds:/app/public/backgrounds:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       PUID: 1000
