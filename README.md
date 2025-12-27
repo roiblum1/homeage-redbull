@@ -55,6 +55,10 @@ helm install homepage ./homepage-openshift -f homepage-openshift/values-openshif
 
 ```
 .
+├── assets/                          # Static assets
+│   ├── backgrounds/                # Background images  
+│   ├── icons/                      # Custom icons
+│   └── README.md                   # Assets documentation
 ├── config/                          # Local config files
 │   ├── services.yaml               # Service definitions
 │   ├── settings.yaml               # Theme and layout
@@ -62,7 +66,9 @@ helm install homepage ./homepage-openshift -f homepage-openshift/values-openshif
 │   └── bookmarks.yaml              # Bottom bookmarks
 ├── homepage-openshift/             # OpenShift Helm chart
 │   ├── templates/                  # Kubernetes templates
-│   ├── values-openshift.yaml       # OpenShift-optimized values
+│   ├── values-openshift.yaml       # Connected deployment values
+│   ├── values-airgap.yaml          # Air-gapped deployment values
+│   ├── AIRGAP-DEPLOYMENT.md        # Air-gapped deployment guide
 │   └── README-OpenShift.md         # OpenShift documentation
 ├── docker-compose.yml             # Local development
 └── README.md                       # This file
@@ -105,9 +111,26 @@ oc create configmap homepage-backgrounds --from-file=your-background.jpg
 ## 🌐 Environment Support
 
 - ✅ **Connected**: Full internet access with external resources
-- ✅ **Disconnected/Air-gapped**: No external dependencies required
+- ✅ **Disconnected/Air-gapped**: Complete offline deployment support
 - ✅ **OpenShift**: Native Routes, security contexts, RBAC
 - ✅ **Kubernetes**: Standard ingress and security policies
+
+### 🔒 Air-Gapped Deployment
+
+For completely disconnected environments:
+```bash
+# Use air-gapped configuration
+helm install homepage ./homepage-openshift -f homepage-openshift/values-airgap.yaml
+
+# See detailed guide
+# homepage-openshift/AIRGAP-DEPLOYMENT.md
+```
+
+**Air-gapped features:**
+- ✅ No external image dependencies
+- ✅ Local background images included (`assets/backgrounds/`)
+- ✅ Internal service references only
+- ✅ No external API requirements
 
 ## 📖 Documentation
 

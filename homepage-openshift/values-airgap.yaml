@@ -1,75 +1,80 @@
-# OpenShift-specific values for Homepage
+# Air-Gapped / Disconnected Environment Values
+# Use this values file for deployments with no internet access
+
 replicaCount: 1
 
 image:
-  registry: ghcr.io
-  repository: gethomepage/homepage
+  registry: registry.internal.local  # CHANGE TO YOUR INTERNAL REGISTRY
+  repository: homepage
   pullPolicy: IfNotPresent
   tag: "latest"
 
-# Environment variables for OpenShift deployment
+# Image pull secret for internal registry (uncomment if required)
+imagePullSecrets: []
+# imagePullSecrets:
+#   - name: internal-registry-secret
+
 extraEnv:
   - name: HOMEPAGE_ALLOWED_HOSTS
     value: "*"
 
 config:
   allowedHosts: []
-  # Homepage configuration files
+  
   services: |
     ---
     - Services:
         - VLAN Manager:
-            href: http://localhost:8000
+            href: http://vlan-manager.internal.local:8000
             description: Network VLAN management tool
             icon: mdi-network
         
         - Cluster Navigator:
-            href: http://localhost:8001
+            href: http://navigator.internal.local:8001
             description: OpenShift cluster navigation tool
             icon: mdi-compass-outline
         
         - GitLab Project:
-            href: https://gitlab.example.com/your-team/specific-repo
+            href: https://gitlab.internal.local/your-team/project
             description: Specific project repository
             icon: mdi-git
         
         - ArgoCD Main:
-            href: https://argocd-main.example.com
+            href: https://argocd.internal.local
             description: Primary GitOps deployment instance
             icon: mdi-ship-wheel
 
     - Developer Tools:
         - Confluence:
-            href: https://confluence.example.com
+            href: https://confluence.internal.local
             description: Team documentation and knowledge base
             icon: mdi-book-open-page-variant
         
         - GitLab Team:
-            href: https://gitlab.example.com/groups/your-team
+            href: https://gitlab.internal.local/groups/your-team
             description: Team group repositories
             icon: mdi-gitlab
 
     - ArgoCD Instances:
         - ArgoCD Dev:
-            href: https://argocd-dev.example.com
+            href: https://argocd-dev.internal.local
             description: Development environment deployments
             icon: mdi-ship-wheel
         
         - ArgoCD Staging:
-            href: https://argocd-staging.example.com
+            href: https://argocd-staging.internal.local
             description: Staging environment deployments
             icon: mdi-ship-wheel
         
         - ArgoCD Production:
-            href: https://argocd-prod.example.com
+            href: https://argocd-prod.internal.local
             description: Production environment deployments
             icon: mdi-ship-wheel
-  
+
   settings: |
     ---
-    title: Team Services Dashboard
-    # favicon: Use local favicon or remove for air-gapped environments
-    # favicon: /icons/favicon.ico
+    title: Team Services Dashboard - Air-Gapped
+    # No external favicon for air-gapped environment
     theme: dark
     color: slate
     background: 
@@ -94,7 +99,7 @@ config:
     headerStyle: underlined
     cardBlur: md
     hideVersion: true
-  
+
   widgets: |
     ---
     - resources:
@@ -103,6 +108,7 @@ config:
         cpu: true
         memory: true
     
+    # Note: Search widget may not work in fully air-gapped environments
     - search:
         provider: google
         target: _blank
@@ -112,8 +118,7 @@ config:
         format:
           timeStyle: short
           dateStyle: short
-          
-  
+
   bookmarks: |
     ---
     - Internal Tools:
@@ -134,7 +139,7 @@ config:
         - ArgoCD:
             - icon: mdi-ship-wheel
               href: https://argocd.internal.local
-        - Nexus:
+        - Nexus/Artifactory:
             - icon: mdi-package-variant
               href: https://nexus.internal.local
               
@@ -173,14 +178,14 @@ service:
   type: ClusterIP
   port: 80
 
-# Disable ingress, use OpenShift Routes instead
+# Disable ingress, use OpenShift Routes
 ingress:
   enabled: false
 
 # OpenShift Route configuration
 route:
   enabled: true
-  host: ""
+  host: "homepage.apps.internal.local"  # CHANGE TO YOUR INTERNAL DOMAIN
   annotations: {}
   tls:
     enabled: true
@@ -198,29 +203,26 @@ resources:
     cpu: 100m
     memory: 128Mi
 
-# Default volumes for config and backgrounds
+# Air-gapped volume configuration
 volumes:
   - name: config
     configMap:
       name: "{{ include \"homepage.fullname\" . }}-config"
-  # Uncomment and modify to add custom background images
+  # Background images via ConfigMap (recommended for air-gapped)
+  - name: backgrounds
+    configMap:
+      name: homepage-backgrounds
+  # Alternative: Use emptyDir if no custom backgrounds needed
   # - name: backgrounds
-  #   hostPath:
-  #     path: /path/to/your/backgrounds
-  #     type: Directory
-  # Or use a ConfigMap for background images:
-  # - name: backgrounds
-  #   configMap:
-  #     name: homepage-backgrounds
+  #   emptyDir: {}
 
 volumeMounts:
   - name: config
     mountPath: "/app/config"
     readOnly: true
-  # Uncomment to mount custom background images
-  # - name: backgrounds
-  #   mountPath: "/app/public/backgrounds"
-  #   readOnly: true
+  - name: backgrounds
+    mountPath: "/app/public/backgrounds"
+    readOnly: true
 
 nodeSelector: {}
 tolerations: []
