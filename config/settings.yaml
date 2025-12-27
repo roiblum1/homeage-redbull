@@ -17,11 +17,8 @@ background:
 layout:
   Core GitOps:
     style: row
-    columns: 3
-  Documentation:
-    style: row
-    columns: 3
-  Monitoring:
+    columns: 2
+  DevOps:
     style: row
     columns: 3
   Internal Tools:
