@@ -14,4 +14,3 @@ spec:
       name: http
   selector:
     {{- include "homepage.selectorLabels" . | nindent 4 }}
-  ipFamilyPolicy: PreferDualStack

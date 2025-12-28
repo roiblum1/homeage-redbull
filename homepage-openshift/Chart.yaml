@@ -1,20 +1,13 @@
 apiVersion: v2
-kubeVersion: ">=1.23.0-0"
 name: homepage
-description: Homepage dashboard for OpenShift - Air-Gapped Ready with ArgoCD & GitLab integrations
-type: application
-version: 1.0.0
-# image: ghcr.io/gethomepage/homepage
+description: Homepage dashboard for OpenShift - Baked Image Only
+version: 2.0.0
 appVersion: "latest"
 keywords:
   - homepage
   - dashboard
-  - openshift
   - air-gapped
-  - argocd
-  - gitlab
 maintainers:
   - name: Red Bull Team
 sources:
   - https://github.com/roiblum1/homeage-redbull
-home: https://gethomepage.dev

@@ -12,10 +12,10 @@ spec:
       {{- include "homepage.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
       labels:
         {{- include "homepage.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
@@ -29,26 +29,11 @@ spec:
       serviceAccountName: {{ include "homepage.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      {{- if or .Values.config.services .Values.config.settings .Values.config.widgets .Values.config.bookmarks }}
-      initContainers:
-        - name: config-setup
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          command: ['sh', '-c', 'cp -r /tmp/config-source/* /app/config/']
-          volumeMounts:
-            - name: config-source
-              mountPath: /tmp/config-source
-            - name: config
-              mountPath: /app/config
-      {{- end }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: homepage
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          {{- if .Values.image.sha }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}@sha256:{{ .Values.image.sha }}"
-          {{- else }}
-          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          {{- end }}
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
@@ -58,49 +43,24 @@ spec:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           env:
-            - name: PUID
-              value: {{ .Values.securityContext.runAsUser | quote }}
-            - name: PGID
-              value: {{ .Values.securityContext.runAsGroup | quote }}
-            - name: HOMEPAGE_ALLOWED_HOSTS
-              value: {{ include "homepage.allowedHosts" . }}
-          {{- with .Values.extraEnv }}
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.extraEnvFrom }}
-          envFrom:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- toYaml .Values.env | nindent 12 }}
           volumeMounts:
-            {{- if or .Values.config.services .Values.config.settings .Values.config.widgets .Values.config.bookmarks }}
-            - name: config
-              mountPath: /app/config
-            {{- end }}
             - name: logs
               mountPath: /app/config/logs
-          {{- with .Values.volumeMounts }}
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
       volumes:
-        {{- if or .Values.config.services .Values.config.settings .Values.config.widgets .Values.config.bookmarks }}
-        - name: config-source
-          configMap:
-            name: {{ include "homepage.fullname" . }}-config
-        - name: config
-          emptyDir: {}
-        {{- end }}
         - name: logs
           emptyDir: {}
-      {{- with .Values.volumes }}
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

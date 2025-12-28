@@ -23,31 +23,28 @@ docker-compose up -d
 # Access at http://localhost:3000
 ```
 
-### OpenShift Deployment (Air-Gapped)
+### OpenShift Deployment (Baked Image)
 
-**Option 1: ConfigMap-Based (Dynamic Configuration)**
 ```bash
-# Install with air-gapped configuration
-helm install homepage ./homepage-openshift
-
-# Access via OpenShift Route
-# Default: https://homepage.apps.internal.local
-```
-
-**Option 2: Baked-In Image (Immutable Configuration)**
-```bash
-# 1. Build custom image with config baked in
+# 1. Build custom image with all config baked in
 ./build-image.sh
 
-# 2. Push to internal registry
+# 2. Push to your internal registry
 podman push registry.internal.local/homepage-redbull:latest
 
-# 3. Deploy with baked-image values
-helm install homepage ./homepage-openshift \
-  -f homepage-openshift/values-baked-image.yaml
+# 3. Create API token secrets
+oc create secret generic homepage-secrets \
+  --from-literal=argocd-token="YOUR_ARGOCD_TOKEN" \
+  --from-literal=gitlab-token="YOUR_GITLAB_TOKEN"
+
+# 4. Deploy with Helm
+helm install homepage ./homepage-openshift
+
+# Access via OpenShift Route (auto-generated)
+oc get route homepage -o jsonpath='{.spec.host}'
 ```
 
-See [BAKED-IMAGE.md](BAKED-IMAGE.md) for detailed guide.
+See [homepage-openshift/README.md](homepage-openshift/README.md) for detailed guide.
 
 ## 📋 Service Sections
 
@@ -211,11 +208,9 @@ helm install homepage ./homepage-openshift
 
 ## 📖 Documentation
 
-- [Helm Chart README](homepage-openshift/README.md) - OpenShift deployment guide
-- [Air-Gapped Deployment](homepage-openshift/AIRGAP-DEPLOYMENT.md) - Offline deployment guide
-- [Baked Image Guide](BAKED-IMAGE.md) - Building custom image with config included
-- [Icons in Offline Environments](ICONS-OFFLINE.md) - Icon configuration for air-gapped deployments
-- [Secrets Management](homepage-openshift/SECRETS.md) - Token configuration
+- [Helm Chart README](homepage-openshift/README.md) - OpenShift deployment with baked image
+- [Secrets Management](homepage-openshift/SECRETS.md) - API token configuration
+- [Icons in Offline Environments](ICONS-OFFLINE.md) - Custom icons for air-gapped deployments
 - [Recommendations](RECOMMENDATIONS.md) - Best practices and widget suggestions
 
 ## 🏗️ Built With

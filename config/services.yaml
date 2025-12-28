@@ -1,4 +1,3 @@
----
 - Core GitOps:
     - GitLab GitOps Project:
         href: https://gitlab.internal.local/your-team/gitops
@@ -6,7 +5,6 @@
         icon: /icons/gitlab.png
         ping: https://gitlab.internal.local
         statusStyle: dot
-
     - ArgoCD Main:
         href: https://argocd.internal.local
         description: Main Argo CD instance (tracks the GitOps repo)
@@ -15,10 +13,9 @@
         statusStyle: dot
         widget:
           type: argocd
-          url:  https://argocd.internal.local
+          url: https://argocd.internal.local
           username: "{{HOMEPAGE_VAR_ARGOCD_TOKEN}}"
           refreshInterval: 30000
-
 - DevOps:
     - GitLab Team Group:
         href: https://gitlab.internal.local/groups/your-team
@@ -36,21 +33,18 @@
             - label: Repos
               format: size
           refreshInterval: 60000
-
     - Confluence:
         href: https://confluence.internal.local
         description: Team documentation
         icon: /icons/confluence.png
         ping: https://confluence.internal.local
         statusStyle: dot
-
     - Grafana Dashboard:
         href: https://grafana.internal.local/d/XXXX/main-dashboard
         description: Main operational dashboard
         icon: /icons/icons8-grafana-96.png
         ping: https://grafana.internal.local
         statusStyle: dot
-
 - Internal Tools:
     - VLAN Manager:
         href: http://vlan-manager.internal.local:8000
@@ -58,14 +52,12 @@
         icon: mdi-network
         ping: http://vlan-manager.internal.local:8000
         statusStyle: dot
-
     - Cluster Navigator:
         href: http://navigator.internal.local:8001
         description: OpenShift cluster navigation tool
         icon: mdi-compass-outline
         ping: http://navigator.internal.local:8001
         statusStyle: dot
-
 - Management Clusters:
     - mgmt-01 Console:
         href: https://console-mgmt01.apps.internal.local
@@ -73,106 +65,91 @@
         icon: /icons/openshift.png
         ping: https://console-mgmt01.apps.internal.local
         statusStyle: dot
-
     - mgmt-01 Argo:
         href: https://argocd-mgmt01.apps.internal.local
         description: Cluster-local Argo instance
         icon: /icons/ArgoCD.png
         ping: https://argocd-mgmt01.apps.internal.local
         statusStyle: dot
-
     - mgmt-02 Console:
         href: https://console-mgmt02.apps.internal.local
         description: OpenShift console
         icon: /icons/openshift.png
         ping: https://console-mgmt02.apps.internal.local
         statusStyle: dot
-
     - mgmt-02 Argo:
         href: https://argocd-mgmt02.apps.internal.local
         description: Cluster-local Argo instance
         icon: /icons/ArgoCD.png
         ping: https://argocd-mgmt02.apps.internal.local
         statusStyle: dot
-
     - mgmt-03 Console:
         href: https://console-mgmt03.apps.internal.local
         description: OpenShift console
         icon: /icons/openshift.png
         ping: https://console-mgmt03.apps.internal.local
         statusStyle: dot
-
     - mgmt-03 Argo:
         href: https://argocd-mgmt03.apps.internal.local
         description: Cluster-local Argo instance
         icon: /icons/ArgoCD.png
         ping: https://argocd-mgmt03.apps.internal.local
         statusStyle: dot
-
     - mgmt-04 Console:
         href: https://console-mgmt04.apps.internal.local
         description: OpenShift console
         icon: /icons/openshift.png
         ping: https://console-mgmt04.apps.internal.local
         statusStyle: dot
-
     - mgmt-04 Argo:
         href: https://argocd-mgmt04.apps.internal.local
         description: Cluster-local Argo instance
         icon: /icons/ArgoCD.png
         ping: https://argocd-mgmt04.apps.internal.local
         statusStyle: dot
-
     - mgmt-05 Console:
         href: https://console-mgmt05.apps.internal.local
         description: OpenShift console
         icon: /icons/openshift.png
         ping: https://console-mgmt05.apps.internal.local
         statusStyle: dot
-
     - mgmt-05 Argo:
         href: https://argocd-mgmt05.apps.internal.local
         description: Cluster-local Argo instance
         icon: /icons/ArgoCD.png
         ping: https://argocd-mgmt05.apps.internal.local
         statusStyle: dot
-
     - mgmt-06 Console:
         href: https://console-mgmt06.apps.internal.local
         description: OpenShift console
         icon: /icons/openshift.png
         ping: https://console-mgmt06.apps.internal.local
         statusStyle: dot
-
     - mgmt-06 Argo:
         href: https://argocd-mgmt06.apps.internal.local
         description: Cluster-local Argo instance
         icon: /icons/ArgoCD.png
         ping: https://argocd-mgmt06.apps.internal.local
         statusStyle: dot
-
 - DC Systems:
     - Cisco UCS:
         href: https://ucs.internal.local
         description: UCS Manager
-        icon: mdi-server
+        icon: /icons/cisco.png
         ping: https://ucs.internal.local
         statusStyle: dot
-
     - NetBox:
         href: https://netbox.internal.local
         description: IPAM / DCIM
-        icon: mdi-ip-network
+        icon: /icons/netbox.png
         ping: https://netbox.internal.local
         statusStyle: dot
-
     - OpenManage:
         href: https://openmanage.internal.local
         description: Dell OpenManage
         icon: /icons/icons8-dell-96.png
         ping: https://openmanage.internal.local
         statusStyle: dot
-
     - OneView:
         href: https://oneview.internal.local
         description: HPE OneView

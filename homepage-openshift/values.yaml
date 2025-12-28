@@ -1,351 +1,65 @@
-# Air-Gapped Homepage Configuration with ArgoCD Apps + GitLab Group Repo Count
+# Homepage Baked Image Deployment - Air-Gapped Ready
+# All configuration is baked into the custom image
+# No ConfigMaps, no complexity - just deploy the image
 
 replicaCount: 1
 
 image:
-  registry: registry.internal.local          # CHANGE TO YOUR INTERNAL REGISTRY
-  repository: homepage
+  registry: registry.internal.local
+  repository: homepage-redbull
   pullPolicy: IfNotPresent
   tag: "latest"
 
 imagePullSecrets: []
+# Uncomment if using private registry
 # imagePullSecrets:
 #   - name: internal-registry-secret
 
-extraEnv:
-  # Allow reverse-proxy/Route hostnames (you can tighten later)
+# Environment variables
+env:
+  # Allow all hostnames (for OpenShift Routes)
   - name: HOMEPAGE_ALLOWED_HOSTS
     value: "*"
 
-  # Skip TLS certificate verification (for self-signed certs or HTTP-only)
-  # IMPORTANT: All services configured to use HTTP by default
-  # Keep this enabled for environments with self-signed HTTPS certificates
+  # Skip TLS verification (for self-signed certs)
   - name: NODE_TLS_REJECT_UNAUTHORIZED
     value: "0"
 
-  # Tokens are injected via env var placeholders in YAML:
-  # - {{HOMEPAGE_VAR_ARGOCD_TOKEN}}
-  # - {{HOMEPAGE_VAR_GITLAB_TOKEN}}
-  #
-  # Create a Secret named "homepage-secrets" with these keys:
-  # - argocd-token
-  # - gitlab-token
+  # ArgoCD API Token (from secret)
   - name: HOMEPAGE_VAR_ARGOCD_TOKEN
     valueFrom:
       secretKeyRef:
         name: homepage-secrets
         key: argocd-token
-        optional: true  # Set to false in production
+        optional: true
+
+  # GitLab API Token (from secret)
   - name: HOMEPAGE_VAR_GITLAB_TOKEN
     valueFrom:
       secretKeyRef:
         name: homepage-secrets
         key: gitlab-token
-        optional: true  # Set to false in production
+        optional: true
 
-config:
-  allowedHosts: []
-
-  services: |
-    ---
-    - Core GitOps:
-        - GitLab GitOps Project:
-            href: http://gitlab.internal.local/your-team/gitops
-            description: Main GitOps repository
-            icon: /icons/gitlab.png
-            ping: http://gitlab.internal.local
-            statusStyle: dot
-
-        - ArgoCD Main:
-            href: http://argocd.internal.local
-            description: Main Argo CD instance (tracks the GitOps repo)
-            icon: /icons/ArgoCD.png
-            ping: http://argocd.internal.local
-            statusStyle: dot
-            widget:
-              type: argocd
-              url:  http://argocd.internal.local
-              username: "{{HOMEPAGE_VAR_ARGOCD_TOKEN}}"
-              refreshInterval: 30000
-              # fields: ["apps", "healthy", "outOfSync", "degraded"]
-
-    - DevOps:
-        - GitLab Team Group:
-            href: http://gitlab.internal.local/groups/your-team
-            description: Team group (repo count)
-            icon: /icons/gitlab.png
-            ping: http://gitlab.internal.local
-            statusStyle: dot
-            widget:
-              type: customapi
-              # IMPORTANT:
-              # If the group is nested, URL-encode the slash: e.g. platform%2Fyour-team
-              url: "http://gitlab.internal.local/api/v4/groups/your-team/projects?per_page=100"
-              method: GET
-              headers:
-                PRIVATE-TOKEN: "{{HOMEPAGE_VAR_GITLAB_TOKEN}}"
-              mappings:
-                - label: Repos
-                  format: size
-              refreshInterval: 60000
-
-        - Confluence:
-            href: http://confluence.internal.local
-            description: Team documentation
-            icon: /icons/confluence.png
-            ping: http://confluence.internal.local
-            statusStyle: dot
-
-        - Grafana Dashboard:
-            href: http://grafana.internal.local/d/XXXX/main-dashboard
-            description: Main operational dashboard
-            icon: /icons/icons8-grafana-96.png
-            ping: http://grafana.internal.local
-            statusStyle: dot
-
-    - Internal Tools:
-        - VLAN Manager:
-            href: http://vlan-manager.internal.local:8000
-            description: Network VLAN management tool
-            icon: mdi-network
-            ping: http://vlan-manager.internal.local:8000
-            statusStyle: dot
-
-        - Cluster Navigator:
-            href: http://navigator.internal.local:8001
-            description: OpenShift cluster navigation tool
-            icon: mdi-compass-outline
-            ping: http://navigator.internal.local:8001
-            statusStyle: dot
-
-    - Management Clusters:
-        - mgmt-01 Console:
-            href: http://console-mgmt01.apps.internal.local
-            description: OpenShift console
-            icon: /icons/openshift.png
-            ping: http://console-mgmt01.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-01 Argo:
-            href: http://argocd-mgmt01.apps.internal.local
-            description: Cluster-local Argo instance
-            icon: /icons/ArgoCD.png
-            ping: http://argocd-mgmt01.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-02 Console:
-            href: http://console-mgmt02.apps.internal.local
-            description: OpenShift console
-            icon: /icons/openshift.png
-            ping: http://console-mgmt02.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-02 Argo:
-            href: http://argocd-mgmt02.apps.internal.local
-            description: Cluster-local Argo instance
-            icon: /icons/ArgoCD.png
-            ping: http://argocd-mgmt02.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-03 Console:
-            href: http://console-mgmt03.apps.internal.local
-            description: OpenShift console
-            icon: /icons/openshift.png
-            ping: http://console-mgmt03.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-03 Argo:
-            href: http://argocd-mgmt03.apps.internal.local
-            description: Cluster-local Argo instance
-            icon: /icons/ArgoCD.png
-            ping: http://argocd-mgmt03.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-04 Console:
-            href: http://console-mgmt04.apps.internal.local
-            description: OpenShift console
-            icon: /icons/openshift.png
-            ping: http://console-mgmt04.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-04 Argo:
-            href: http://argocd-mgmt04.apps.internal.local
-            description: Cluster-local Argo instance
-            icon: /icons/ArgoCD.png
-            ping: http://argocd-mgmt04.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-05 Console:
-            href: http://console-mgmt05.apps.internal.local
-            description: OpenShift console
-            icon: /icons/openshift.png
-            ping: http://console-mgmt05.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-05 Argo:
-            href: http://argocd-mgmt05.apps.internal.local
-            description: Cluster-local Argo instance
-            icon: /icons/ArgoCD.png
-            ping: http://argocd-mgmt05.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-06 Console:
-            href: http://console-mgmt06.apps.internal.local
-            description: OpenShift console
-            icon: /icons/openshift.png
-            ping: http://console-mgmt06.apps.internal.local
-            statusStyle: dot
-
-        - mgmt-06 Argo:
-            href: http://argocd-mgmt06.apps.internal.local
-            description: Cluster-local Argo instance
-            icon: /icons/ArgoCD.png
-            ping: http://argocd-mgmt06.apps.internal.local
-            statusStyle: dot
-
-    - DC Systems:
-        - Cisco UCS:
-            href: http://ucs.internal.local
-            description: UCS Manager
-            icon: mdi-server
-            ping: http://ucs.internal.local
-            statusStyle: dot
-
-        - NetBox:
-            href: http://netbox.internal.local
-            description: IPAM / DCIM
-            icon: mdi-ip-network
-            ping: http://netbox.internal.local
-            statusStyle: dot
-
-        - OpenManage:
-            href: http://openmanage.internal.local
-            description: Dell OpenManage
-            icon: /icons/icons8-dell-96.png
-            ping: http://openmanage.internal.local
-            statusStyle: dot
-
-        - OneView:
-            href: http://oneview.internal.local
-            description: HPE OneView
-            icon: /icons/icons8-hp-96.png
-            ping: http://oneview.internal.local
-            statusStyle: dot
-
-  settings: |
-    ---
-    title: Team Hub
-    theme: dark
-    color: slate
-
-    headerStyle: underlined
-    hideVersion: true
-    useEqualHeights: true
-    lazyLoad: true
-    statusStyle: dot
-
-    # Force use of local icons (no CDN) for air-gapped environments
-    iconStyle: theme
-
-    background:
-      image: /backgrounds/v4-background-dark.jpg
-      blur: sm
-      saturate: 60
-      brightness: 70
-      opacity: 35
-
-    layout:
-      Core GitOps:
-        style: row
-        columns: 2
-      DevOps:
-        style: row
-        columns: 3
-      Internal Tools:
-        style: row
-        columns: 3
-      Management Clusters:
-        style: row
-        columns: 4
-      DC Systems:
-        style: row
-        columns: 4
-
-  widgets: |
-    ---
-    - resources:
-        backend: resources
-        expanded: true
-        cpu: true
-        memory: true
-
-    - datetime:
-        text_size: xl
-        format:
-          timeStyle: short
-          dateStyle: short
-
-    # Optional: Add search if needed
-    # - search:
-    #     provider: google
-    #     target: _blank
-
-  bookmarks: |
-    ---
-    - Quick Links:
-        - GitLab:
-            - icon: /icons/gitlab.png
-              href: https://gitlab.internal.local
-        - ArgoCD Main:
-            - icon: /icons/ArgoCD.png
-              href: https://argocd.internal.local
-        - Confluence:
-            - icon: /icons/confluence.png
-              href: https://confluence.internal.local
-        - Grafana:
-            - icon: /icons/icons8-grafana-96.png
-              href: https://grafana.internal.local
-
-serviceAccount:
-  create: true
-  automount: true
-  annotations: {}
-  name: ""
-
-podAnnotations: {}
-podLabels: {}
-
-podSecurityContext: {}
-
-securityContext:
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop: [ "ALL" ]
-  readOnlyRootFilesystem: false
-  runAsNonRoot: true
-  privileged: false
-  seccompProfile:
-    type: RuntimeDefault
-
+# Service configuration
 service:
   type: ClusterIP
-  port: 80
+  port: 3000
 
-ingress:
-  enabled: false
-
+# OpenShift Route
 route:
   enabled: true
-  host: "homepage.apps.internal.local"     # CHANGE TO YOUR INTERNAL DOMAIN
-  annotations: {}
+  host: ""  # Auto-generated: homepage-<namespace>.apps.<cluster-domain>
   tls:
     enabled: true
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
 
-rbac:
-  enabled: true
+# Ingress (disabled - use Route on OpenShift)
+ingress:
+  enabled: false
 
+# Resource limits
 resources:
   limits:
     cpu: 500m
@@ -354,16 +68,37 @@ resources:
     cpu: 100m
     memory: 128Mi
 
-volumes:
-  - name: backgrounds
-    configMap:
-      name: homepage-backgrounds
+# Security context
+podSecurityContext:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
 
-volumeMounts:
-  - name: backgrounds
-    mountPath: "/app/public/backgrounds"
-    readOnly: true
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  privileged: false
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
 
+# Service Account
+serviceAccount:
+  create: true
+  name: ""
+
+# Node selection
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+# Pod annotations (optional)
+podAnnotations: {}
+
+# Pod labels (optional)
+podLabels: {}
