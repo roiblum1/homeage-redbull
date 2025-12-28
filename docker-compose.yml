@@ -18,6 +18,9 @@ services:
       # Allow insecure TLS (self-signed certificates)
       # IMPORTANT: Only use in internal/air-gapped environments with self-signed certs
       NODE_TLS_REJECT_UNAUTHORIZED: "0"
+      # Disable external icon fetching for air-gapped environments
+      # Homepage will use bundled MDI icons only (configured via iconStyle: theme in settings.yaml)
+      LOG_LEVEL: "info"
       # Optional: Add your ArgoCD and GitLab tokens here (or use .env file)
       # HOMEPAGE_VAR_ARGOCD_TOKEN: "your-argocd-token"
       # HOMEPAGE_VAR_GITLAB_TOKEN: "your-gitlab-token"

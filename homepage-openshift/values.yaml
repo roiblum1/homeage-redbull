@@ -244,6 +244,9 @@ config:
     lazyLoad: true
     statusStyle: dot
 
+    # Force use of local icons (no CDN) for air-gapped environments
+    iconStyle: theme
+
     background:
       image: /backgrounds/v4-background-dark.jpg
       blur: sm

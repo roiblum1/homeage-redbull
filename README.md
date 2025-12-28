@@ -207,13 +207,14 @@ helm install homepage ./homepage-openshift
 - ✅ Local background images included (`assets/backgrounds/`)
 - ✅ Internal service references only
 - ✅ No external API requirements
-- ✅ All icons bundled in Homepage image (Material Design Icons)
+- ✅ All icons bundled in Homepage image (Material Design Icons via `iconStyle: theme`)
 
 ## 📖 Documentation
 
 - [Helm Chart README](homepage-openshift/README.md) - OpenShift deployment guide
 - [Air-Gapped Deployment](homepage-openshift/AIRGAP-DEPLOYMENT.md) - Offline deployment guide
 - [Baked Image Guide](BAKED-IMAGE.md) - Building custom image with config included
+- [Icons in Offline Environments](ICONS-OFFLINE.md) - Icon configuration for air-gapped deployments
 - [Secrets Management](homepage-openshift/SECRETS.md) - Token configuration
 - [Recommendations](RECOMMENDATIONS.md) - Best practices and widget suggestions
 
