@@ -24,6 +24,8 @@ docker-compose up -d
 ```
 
 ### OpenShift Deployment (Air-Gapped)
+
+**Option 1: ConfigMap-Based (Dynamic Configuration)**
 ```bash
 # Install with air-gapped configuration
 helm install homepage ./homepage-openshift
@@ -31,6 +33,21 @@ helm install homepage ./homepage-openshift
 # Access via OpenShift Route
 # Default: https://homepage.apps.internal.local
 ```
+
+**Option 2: Baked-In Image (Immutable Configuration)**
+```bash
+# 1. Build custom image with config baked in
+./build-image.sh
+
+# 2. Push to internal registry
+podman push registry.internal.local/homepage-redbull:latest
+
+# 3. Deploy with baked-image values
+helm install homepage ./homepage-openshift \
+  -f homepage-openshift/values-baked-image.yaml
+```
+
+See [BAKED-IMAGE.md](BAKED-IMAGE.md) for detailed guide.
 
 ## 📋 Service Sections
 
@@ -196,6 +213,7 @@ helm install homepage ./homepage-openshift
 
 - [Helm Chart README](homepage-openshift/README.md) - OpenShift deployment guide
 - [Air-Gapped Deployment](homepage-openshift/AIRGAP-DEPLOYMENT.md) - Offline deployment guide
+- [Baked Image Guide](BAKED-IMAGE.md) - Building custom image with config included
 - [Secrets Management](homepage-openshift/SECRETS.md) - Token configuration
 - [Recommendations](RECOMMENDATIONS.md) - Best practices and widget suggestions
 

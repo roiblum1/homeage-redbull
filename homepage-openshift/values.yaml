@@ -352,19 +352,11 @@ resources:
     memory: 128Mi
 
 volumes:
-  - name: config
-    configMap:
-      name: "{{ include \"homepage.fullname\" . }}-config"
-
   - name: backgrounds
     configMap:
       name: homepage-backgrounds
 
 volumeMounts:
-  - name: config
-    mountPath: "/app/config"
-    readOnly: true
-
   - name: backgrounds
     mountPath: "/app/public/backgrounds"
     readOnly: true

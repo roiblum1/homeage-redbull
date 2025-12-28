@@ -29,6 +29,17 @@ spec:
       serviceAccountName: {{ include "homepage.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- if or .Values.config.services .Values.config.settings .Values.config.widgets .Values.config.bookmarks }}
+      initContainers:
+        - name: config-setup
+          image: "{{ .Values.image.registry }}/{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command: ['sh', '-c', 'cp -r /tmp/config-source/* /app/config/']
+          volumeMounts:
+            - name: config-source
+              mountPath: /tmp/config-source
+            - name: config
+              mountPath: /app/config
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -68,16 +79,23 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           volumeMounts:
+            {{- if or .Values.config.services .Values.config.settings .Values.config.widgets .Values.config.bookmarks }}
             - name: config
               mountPath: /app/config
+            {{- end }}
             - name: logs
               mountPath: /app/config/logs
           {{- with .Values.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
       volumes:
+        {{- if or .Values.config.services .Values.config.settings .Values.config.widgets .Values.config.bookmarks }}
+        - name: config-source
+          configMap:
+            name: {{ include "homepage.fullname" . }}-config
         - name: config
           emptyDir: {}
+        {{- end }}
         - name: logs
           emptyDir: {}
       {{- with .Values.volumes }}

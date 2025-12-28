@@ -1,0 +1,93 @@
+# Helm values for deploying Homepage with baked-in configuration
+# Use this when deploying the custom-built image with config already included
+
+replicaCount: 1
+
+image:
+  registry: registry.internal.local
+  repository: homepage-redbull
+  pullPolicy: IfNotPresent
+  tag: "latest"
+
+imagePullSecrets: []
+# imagePullSecrets:
+#   - name: internal-registry-secret
+
+extraEnv:
+  # Allow reverse-proxy/Route hostnames
+  - name: HOMEPAGE_ALLOWED_HOSTS
+    value: "*"
+
+  # Skip TLS certificate verification (baked into image)
+  - name: NODE_TLS_REJECT_UNAUTHORIZED
+    value: "0"
+
+  # API Tokens (still need to be injected from secrets)
+  - name: HOMEPAGE_VAR_ARGOCD_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: homepage-secrets
+        key: argocd-token
+        optional: true
+  - name: HOMEPAGE_VAR_GITLAB_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: homepage-secrets
+        key: gitlab-token
+        optional: true
+
+# IMPORTANT: Disable config injection since config is baked into the image
+config:
+  allowedHosts: []
+  # Do not define services, settings, widgets, bookmarks here
+  # They are already baked into the image
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+
+# Route configuration (OpenShift)
+route:
+  enabled: true
+  host: ""  # Will use default: homepage.apps.<cluster-domain>
+  tls:
+    enabled: true
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+
+# Ingress (disabled by default, use Route on OpenShift)
+ingress:
+  enabled: false
+
+# Resources
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# No additional volumes needed - config is baked in
+volumes: []
+volumeMounts: []
+
+# Security context
+podSecurityContext: {}
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  privileged: false
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+
+# Other settings
+nodeSelector: {}
+tolerations: []
+affinity: {}
