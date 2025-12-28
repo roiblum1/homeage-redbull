@@ -17,10 +17,13 @@ COPY config/bookmarks.yaml /app/config/bookmarks.yaml
 # Copy background images
 COPY assets/backgrounds/ /app/public/backgrounds/
 
+# Copy custom icons (if any exist in icons/ directory)
+COPY icons/ /app/public/icons/
+
 # Ensure proper permissions (Homepage runs as non-root user)
 USER root
-RUN chown -R 1000:1000 /app/config /app/public/backgrounds && \
-    chmod -R 755 /app/config /app/public/backgrounds
+RUN chown -R 1000:1000 /app/config /app/public/backgrounds /app/public/icons && \
+    chmod -R 755 /app/config /app/public/backgrounds /app/public/icons
 USER 1000
 
 # Environment variables (can be overridden at runtime)
